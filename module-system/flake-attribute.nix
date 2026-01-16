@@ -39,6 +39,11 @@ in {
       type = types.listOf types.deferredModule;
       default = [];
     };
+    alternativeNixpkgs = mkOption {
+      type = types.unspecified;
+      default = null;
+      description = "alternative nixpkgs repository, availible in modules as pkgs'";
+    };
     staging = {
       lib = mkOption {
         type = types.lazyAttrsOf types.unspecified;

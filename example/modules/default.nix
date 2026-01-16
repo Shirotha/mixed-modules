@@ -10,9 +10,10 @@ with lib; with config.lib;
      // args |> mkOption;
 
   pkgs =
-    { pkgs, ... }:
+    { pkgs, pkgs', ... }:
     {
       hello = pkgs.hello;
+      hello' = pkgs'.hello;
     };
 
   host.main = mkBoolOption {};

@@ -27,6 +27,7 @@
       mixed-modules = {
         modules = ./modules|>readDir|>mapAttrsToList (mod: _: ./modules/${mod}) ;
         homeManagerModule = home-manager.nixosModules.home-manager;
+        alternativeNixpkgs = nixpkgs;
 
         stateVersion = "25.11";
         hostName = toUpper;

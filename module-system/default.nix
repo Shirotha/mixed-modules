@@ -10,12 +10,25 @@ let
 in {
   imports = singleton<|importApply ./flake-attribute.nix { inherit local-lib cfg; };
 
+  perSystem =
+    { system, ... }:
+    {
+      _module.args.pkgs' =
+        let
+          nixpkgs' = config.mixed-modules.alternativeNixpkgs;
+        in mkIf (nixpkgs' != null) (
+          import config.mixed-modules.alternativeNixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          });
+    };
+
   mixed-modules.staging = {
     inherit (cfg) lib;
     pkgs = genAttrs (import inputs.systems) (system: withSystem system (
-      { pkgs, ... }:
+      { pkgs, pkgs', ... }:
         let
-          args = { inherit pkgs final; };
+          args = { inherit pkgs pkgs' final; };
           apply = mod:
             if isFunction mod
             then mod args

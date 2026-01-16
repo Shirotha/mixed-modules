@@ -21,20 +21,19 @@ in {
         local-lib = cfg.staging.lib;
       };
     in {
-      debug-cfg = cfg;
       nixosConfigurations = cfg.staging.config.host|>mapAttrs' (host: host-config:
         withSystem host-config.system (
-          { system, pkgs, ... }:
+          { system, pkgs, pkgs', ... }:
           let
             hostName = cfg.hostName host;
             local-pkgs = cfg.staging.pkgs.${system};
-            specialArgs = common_args // {
-                inherit host-config local-pkgs;
+            common_args' = common_args // {
+              inherit host-config local-pkgs pkgs';
+            };
+            specialArgs = common_args' // {
                 users-config = cfg.staging.config.user.${host};
               } // cfg.specialArgs;
-            extraSpecialArgs = common_args // {
-                inherit host-config local-pkgs;
-              } // cfg.extraSpecialArgs;
+            extraSpecialArgs = common_args' // cfg.extraSpecialArgs;
           in {
             name = hostName;
             value = lib.nixosSystem {
@@ -44,7 +43,7 @@ in {
                     inputs.nixpkgs.nixosModules.readOnlyPkgs
                     {
                       nixpkgs = { inherit pkgs; };
-                      networking = { inherit hostName; };
+                      networking = mkDefault { inherit hostName; };
                       system = { inherit (cfg) stateVersion; };
                     }
                   ]
