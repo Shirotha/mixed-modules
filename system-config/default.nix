@@ -28,7 +28,7 @@ in {
             hostName = cfg.hostName host;
             local-pkgs = cfg.staging.pkgs.${system};
             common_args' = common_args // {
-              inherit host-config local-pkgs pkgs';
+              inherit host host-config local-pkgs pkgs';
             };
             specialArgs = common_args' // {
                 users-config = cfg.staging.config.user.${host};
@@ -56,7 +56,7 @@ in {
                     users = cfg.staging.config.user.${host}|>mapAttrs (user: user-config: {
                       imports = cfg.staging.homeModules
                         ++ [{
-                            _module.args = { inherit user-config; };
+                            _module.args = { inherit user user-config; };
                           }];
                       home = {
                         inherit (cfg) stateVersion;
